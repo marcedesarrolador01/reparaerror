@@ -1,0 +1,130 @@
+{% extends "foro/base.html" %}
+
+{% block title %}Publicaciones{% endblock %}
+
+{% block content %}
+
+<h3 class="text-center mb-4">Publicaciones</h3>
+
+{% for post in page_obj %}
+
+<div class="card mb-3 shadow-sm">
+<div class="row g-0 align-items-center">
+
+<!-- IMAGEN -->
+
+<div class="col-md-2">
+
+{% if post.imagen %}
+<img src="{{ post.imagen.url }}" class="img-fluid rounded-start">
+{% else %}
+<div class="bg-light text-center py-4 small text-muted">
+Sin imagen
+</div>
+{% endif %}
+
+</div>
+
+<!-- CONTENIDO -->
+
+<div class="col-md-7">
+
+<div class="card-body">
+
+<h5>{{ post.titulo }}</h5>
+
+<small class="text-muted">
+{{ post.categoria }} ·
+{{ post.marca|default:"Sin marca" }}
+{{ post.modelo|default:"" }}
+</small>
+
+<p class="mt-2">
+{{ post.descripcion|truncatechars:160 }}
+</p>
+
+<a href="{% url 'foro:post_detail' post.slug %}"
+class="btn btn-sm btn-primary rounded-pill">
+Ver solución
+</a>
+
+</div>
+
+</div>
+
+<!-- ESTADO + AUTOR -->
+
+<div class="col-md-3 text-center">
+
+{% with estado=post.get_estado_display %}
+
+<span class="badge px-3 py-2 mb-2
+{% if estado == 'Abierto' %}
+bg-success
+{% elif estado == 'En proceso' %}
+bg-warning text-dark
+{% else %}
+bg-primary
+{% endif %}
+">
+
+{{ estado }}
+
+</span>
+
+{% endwith %}
+
+<div class="mt-2">
+
+<i class="bi bi-person-circle fs-3"></i>
+
+<div class="small fw-bold">{{ post.autor }}</div>
+
+<div class="small text-muted">
+{{ post.creado|date:"d/m/Y" }}
+</div>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+{% empty %}
+<p>No hay publicaciones</p>
+{% endfor %}
+
+<!-- PAGINACIÓN -->
+
+<nav>
+<ul class="pagination justify-content-center">
+
+{% if page_obj.has_previous %}
+<li class="page-item">
+<a class="page-link"
+href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if categoria %}&categoria={{ categoria }}{% endif %}">
+Anterior
+</a>
+</li>
+{% endif %}
+
+<li class="page-item disabled">
+<span class="page-link">
+Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+</span>
+</li>
+
+{% if page_obj.has_next %}
+<li class="page-item">
+<a class="page-link"
+href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if categoria %}&categoria={{ categoria }}{% endif %}">
+Siguiente
+</a>
+</li>
+{% endif %}
+
+</ul>
+</nav>
+
+{% endblock %}
