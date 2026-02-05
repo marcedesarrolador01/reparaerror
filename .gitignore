@@ -10,7 +10,9 @@ env/
 venv/
 .entorno/
 .venv/
-
+entorno/
+post/
+.post
 # Django
 db.sqlite3
 media/
